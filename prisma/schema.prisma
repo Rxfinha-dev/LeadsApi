@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Lead {
+  id         String      @id @default(uuid())
+  name       String?
+  email      String      @unique
+  created_at DateTime?   @default(now())
+  updated_at DateTime?   @default(now())
+  deleted_at DateTime?
+  intentions Intention[]
+
+  @@map("leads")
+}
+
+model Intention {
+  id            String    @id @default(uuid())
+  zipcode_start String    @db.VarChar(8)
+  zipcode_end   String    @db.VarChar(8)
+  lead_id       String?
+  lead          Lead?     @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+  created_at    DateTime? @default(now())
+  updated_at    DateTime? @default(now())
+  deleted_at    DateTime?
+
+  @@map("intentions")
+}
