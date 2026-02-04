@@ -1,4 +1,4 @@
-import { prismaClient } from "../../../clients/prismaClient.js";
+import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import type { ICreateLead } from "../interfaces/createLead.interface.js";
 
 class LeadsRepository {
