@@ -259,14 +259,14 @@ class IntentionsServices {
         }
     };
 &nbsp;
-    async updateLeadId({ intentionId, lead_id }: IUpdateLeadId) {
+    async updateLeadId({ intention_id, lead_id }: IUpdateLeadId) {
         try {
-            if (!intentionId) {
+            if (!intention_id) {
                 throw new BadRequestError("Informe o id!")
             }
             const intentionExists = await prismaClient.intention.findFirst({
                 where: {
-                    id: intentionId
+                    id: intention_id
                 }
             });
 &nbsp;
@@ -292,7 +292,7 @@ class IntentionsServices {
                 throw new BadRequestError("Lead está inativo");
             }
 &nbsp;
-            const intention = await this.intentionsRepository.updateLeadId({ intentionId, lead_id })
+            const intention = await this.intentionsRepository.updateLeadId({ intention_id, lead_id })
 &nbsp;
             return intention;
         } catch (e) {

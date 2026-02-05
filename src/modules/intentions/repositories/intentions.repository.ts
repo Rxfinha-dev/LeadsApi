@@ -20,14 +20,14 @@ class IntentionsRepository {
         }
     }
 
-    async updateLeadId({ intentionId, lead_id }: IUpdateLeadId) {
+    async updateLeadId({ intention_id, lead_id }: IUpdateLeadId) {
         try {
             return await prismaClient.intention.update({
                 data: {
                     lead_id
                 },
                 where: {
-                    id: intentionId
+                    id: intention_id
                 }
             })
         }

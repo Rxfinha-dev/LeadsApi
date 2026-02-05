@@ -38,7 +38,7 @@ MAIL_PASS=
 # .envExample contém todas as informações
 ```
 
-**Explique cada variável:**
+---
 
 - `DATABASE_URL`: String de conexão com o banco de dados.
 - `MAIL_HOST`: Endereço do servidor de e-mail que vai autenticar e entregar suas mensagens.

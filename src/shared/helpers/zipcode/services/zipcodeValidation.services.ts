@@ -22,7 +22,7 @@ class ZipcodeValidationService {
         const data: IZipcodeValidation = await response.json();
 
         if (data.erro) {
-            throw new NotFoundError("CEP não encontrado!")
+            throw new NotFoundError(`CEP não encontrado: ${zipcodeNormalized}!`)
         }
 
         return data;

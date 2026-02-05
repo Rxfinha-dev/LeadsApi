@@ -1,10 +1,8 @@
-import type { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyReply } from "fastify";
-import { ok } from "node:assert";
+import type { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { LeadsController } from "../modules/leads/controllers/leads.controller.js";
 
 
-export async function leadsRoutes(fastify: FastifyInstance, options: FastifyPluginOptions) {
-
+export async function leadsRoutes(fastify: FastifyInstance) {
     fastify.post("", {
         schema: {
             tags: ["Leads"],
