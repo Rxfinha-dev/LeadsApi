@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1770293851130" clover="3.2.0">
+  <project timestamp="1770293851130" name="All files">
+    <metrics statements="73" coveredstatements="65" conditionals="42" coveredconditionals="32" methods="16" coveredmethods="15" elements="131" coveredelements="112" complexity="0" loc="73" ncloc="73" packages="8" files="10" classes="10"/>
+    <package name="modules.intentions.repositories">
+      <metrics statements="8" coveredstatements="4" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <file name="intentions.repository.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\modules\intentions\repositories\intentions.repository.ts">
+        <metrics statements="8" coveredstatements="4" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="modules.intentions.services">
+      <metrics statements="30" coveredstatements="30" conditionals="16" coveredconditionals="16" methods="3" coveredmethods="3"/>
+      <file name="intentions.services.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\modules\intentions\services\intentions.services.ts">
+        <metrics statements="30" coveredstatements="30" conditionals="16" coveredconditionals="16" methods="3" coveredmethods="3"/>
+        <line num="12" count="9" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="17" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="38" count="7" type="stmt"/>
+        <line num="39" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="42" count="6" type="stmt"/>
+        <line num="48" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="51" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="54" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="3" type="stmt"/>
+        <line num="63" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="66" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="74" count="6" type="stmt"/>
+      </file>
+    </package>
+    <package name="modules.leads.repositories">
+      <metrics statements="4" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="leads.repository.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\modules\leads\repositories\leads.repository.ts">
+        <metrics statements="4" coveredstatements="2" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="modules.leads.services">
+      <metrics statements="19" coveredstatements="18" conditionals="18" coveredconditionals="16" methods="2" coveredmethods="2"/>
+      <file name="leads.services.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\modules\leads\services\leads.services.ts">
+        <metrics statements="19" coveredstatements="18" conditionals="18" coveredconditionals="16" methods="2" coveredmethods="2"/>
+        <line num="11" count="7" type="stmt"/>
+        <line num="14" count="9" type="stmt"/>
+        <line num="15" count="9" type="cond" truecount="4" falsecount="0"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="24" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="30" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="41" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="47" count="2" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="63" count="8" type="stmt"/>
+      </file>
+    </package>
+    <package name="shared.email.providers">
+      <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="email.provider.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\shared\email\providers\email.provider.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="shared.email.services">
+      <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <file name="email.service.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\shared\email\services\email.service.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="shared.errors">
+      <metrics statements="5" coveredstatements="4" conditionals="2" coveredconditionals="0" methods="4" coveredmethods="3"/>
+      <file name="httpErrors.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\shared\errors\httpErrors.ts">
+        <metrics statements="5" coveredstatements="4" conditionals="2" coveredconditionals="0" methods="4" coveredmethods="3"/>
+        <line num="5" count="14" type="stmt"/>
+        <line num="6" count="14" type="stmt"/>
+        <line num="13" count="12" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="shared.helpers">
+      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <file name="isEmailValid.helper.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\shared\helpers\isEmailValid.helper.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="2" count="7" type="stmt"/>
+      </file>
+      <file name="isValidZipcode.helper.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\shared\helpers\isValidZipcode.helper.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="2" count="6" type="stmt"/>
+      </file>
+      <file name="zipcodeFormatter.helper.ts" path="C:\Users\Rafael Oliveira\SmartEnvios\LeadsApi\src\shared\helpers\zipcodeFormatter.helper.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="2" count="8" type="stmt"/>
+        <line num="4" count="8" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
