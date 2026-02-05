@@ -1,3 +1,4 @@
 export interface IUpdateLeadId {
-    lead_id: string
+    intentionId: string;
+    lead_id: string;
 }

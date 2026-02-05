@@ -1,17 +1,23 @@
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import { emailService } from "../../../shared/email/services/email.service.js";
+import { BadRequestError } from "../../../shared/errors/httpErrors.js";
+import { isEmailValid } from "../../../shared/helpers/isEmailValid.helper.js";
 import type { ICreateLead } from "../interfaces/createLead.interface.js";
 import { LeadsRepository } from "../repositories/leads.repository.js";
 
 class LeadsServices {
+    private readonly leadsRepository: LeadsRepository;
+    constructor() {
+        this.leadsRepository = new LeadsRepository();
+    }
     async createLead({ name, email }: ICreateLead) {
         try {
             if (!name || !email) {
-                throw new Error("Preencha todos os campos");
+                throw new BadRequestError("Preencha todos os campos!")
             }
 
-            if (!this.isEmailValid(email)) {
-                throw new Error("Email inválido");
+            if (!isEmailValid(email)) {
+                throw new BadRequestError("Email inválido")
             }
 
             const emailExists = await prismaClient.lead.findFirst({
@@ -22,11 +28,10 @@ class LeadsServices {
             });
 
             if (emailExists) {
-                throw new Error('Email já cadastrado');
+                throw new BadRequestError("Email já cadastrado")
             }
 
-            const leadsRepository = new LeadsRepository();
-            const lead = await leadsRepository.createLead({ name, email });
+            const lead = await this.leadsRepository.createLead({ name, email });
 
             await emailService.send({
                 to: email,
@@ -44,10 +49,6 @@ class LeadsServices {
                 throw new Error(e.message);
             }
         }
-    }
-
-    private isEmailValid(email: string): boolean {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 }
 

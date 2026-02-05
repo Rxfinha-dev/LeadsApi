@@ -1,3 +1,4 @@
+import { BadRequestError, NotFoundError } from "../../errors/httpErrors.js";
 import { isValidZipcode } from "../../helpers/isValidZipcode.helper.js";
 import type { IZipcodeValidation } from "../interfaces/zipcodeValidation.interface.js";
 
@@ -6,20 +7,20 @@ class ZipcodeValidationService {
         const zipcodeNormalized = cep.replace(/\D/g, "");
 
         if (!isValidZipcode(zipcodeNormalized)) {
-            throw new Error("CEP inválido");
+            throw new BadRequestError("CEP inválido")
         }
         const response = await fetch(
             `https://viacep.com.br/ws/${zipcodeNormalized}/json/`
         );
 
         if (!response.ok) {
-            throw new Error("Erro ao consultar o ViaCEP");
+            throw new BadRequestError("CEP inválido")
         }
 
         const data: IZipcodeValidation = await response.json();
 
         if (data.erro) {
-            throw new Error("CEP não encontrado");
+            throw new NotFoundError("CEP não encontrado!")
         }
 
         return data;

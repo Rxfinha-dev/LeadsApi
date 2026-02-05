@@ -3,11 +3,15 @@ import type { ICreateLead } from "../interfaces/createLead.interface.js";
 import { LeadsServices } from "../services/leads.services.js";
 
 class LeadsController {
+    private readonly leadsServices: LeadsServices;
+    constructor() {
+        this.leadsServices = new LeadsServices();
+    }
     async post(request: FastifyRequest, reply: FastifyReply) {
         const { name, email } = request.body as ICreateLead;
 
-        const leadService = new LeadsServices()
-        const lead = await leadService.createLead({ name, email })
+
+        const lead = await this.leadsServices.createLead({ name, email })
 
         reply.code(201).send(lead);
     }

@@ -4,7 +4,7 @@ import type { ICreateLead } from "../interfaces/createLead.interface.js";
 class LeadsRepository {
     async createLead({ name, email }: ICreateLead) {
         try {
-            return prismaClient.lead.create({
+            return await prismaClient.lead.create({
                 data: {
                     name,
                     email
