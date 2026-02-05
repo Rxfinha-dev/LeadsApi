@@ -15,47 +15,64 @@ class IntentionsServices {
     async createIntention({ zipcode_start, zipcode_end }: ICreateIntention) {
         try {
             if (!zipcode_start || !zipcode_end) {
-                throw new BadRequestError("Informe o id!")
+                throw new BadRequestError("Preencha as informações")
             }
+
+            zipcode_start = formatZipcode(zipcode_start);
+            zipcode_end = formatZipcode(zipcode_end)
 
             const zipcodeService = new ZipcodeValidationService();
             await zipcodeService.verifyZipcode(zipcode_start);
             await zipcodeService.verifyZipcode(zipcode_end);
-
-            zipcode_start = formatZipcode(zipcode_start);
-            zipcode_end = formatZipcode(zipcode_end)
 
             const intention = await this.intentionsRepository.createIntention({ zipcode_start, zipcode_end });
 
             return intention;
 
         } catch (e) {
-            if (e instanceof Error) {
-                throw new Error(e.message);
-            }
+            throw e;
         }
     };
 
     async updateLeadId({ intentionId, lead_id }: IUpdateLeadId) {
-        if (!intentionId) {
-            throw new BadRequestError("Informe o id!")
-        }
-        if (!lead_id) {
-            throw new BadRequestError("O id do lead é necessário")
-        }
-        const leadExists = await prismaClient.lead.findFirst({
-            where: {
-                id: lead_id
-            },
-        });
+        try {
+            if (!intentionId) {
+                throw new BadRequestError("Informe o id!")
+            }
+            const intentionExists = await prismaClient.intention.findFirst({
+                where: {
+                    id: intentionId
+                }
+            });
 
-        if (!leadExists) {
-            throw new NotFoundError("Lead não existe!");
+            if (!intentionExists) {
+                throw new NotFoundError("Intention não existe!")
+            }
+            if (intentionExists.lead_id) {
+                throw new BadRequestError("Intenção já possui um lead vinculado");
+            }
+            if (!lead_id) {
+                throw new BadRequestError("O id do lead é necessário")
+            }
+            const leadExists = await prismaClient.lead.findFirst({
+                where: {
+                    id: lead_id
+                },
+            });
+
+            if (!leadExists) {
+                throw new NotFoundError("Lead não existe!");
+            }
+            if (leadExists.deleted_at) {
+                throw new BadRequestError("Lead está inativo");
+            }
+
+            const intention = await this.intentionsRepository.updateLeadId({ intentionId, lead_id })
+
+            return intention;
+        } catch (e) {
+            throw e;
         }
-
-        const intention = await this.intentionsRepository.updateLeadId({ intentionId, lead_id })
-
-        return intention;
 
     }
 
