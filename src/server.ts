@@ -13,9 +13,13 @@ const start = async () => {
         swagger: {
             info: {
                 title: "LeadsIntentionsApi",
-                description: "API para captar leads",
+                description: "API para captar e gerenciar leads, de acordo com as intenções de frete.",
                 version: "1.0.0"
             },        
+            tags: [
+                {name: "Intentions", description: " Intenções de frete."},
+                {name: "Leads", description: "Clientes em potencial."}
+            ],
             host: "localhost:3333",
             schemes: ["http"],
             consumes: ["application/json"],
