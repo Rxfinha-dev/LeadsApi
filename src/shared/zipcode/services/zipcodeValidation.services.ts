@@ -1,10 +1,12 @@
 import { BadRequestError, NotFoundError } from "../../errors/httpErrors.js";
 import { isValidZipcode } from "../../helpers/isValidZipcode.helper.js";
+import { formatZipcode } from "../../helpers/zipcodeFormatter.js";
 import type { IZipcodeValidation } from "../interfaces/zipcodeValidation.interface.js";
 
 class ZipcodeValidationService {
-    async verifyZipcode(cep: string): Promise<IZipcodeValidation> {
-        const zipcodeNormalized = cep.replace(/\D/g, "");
+    async verifyZipcode(zipcode: string): Promise<IZipcodeValidation> {
+
+        const zipcodeNormalized = formatZipcode(zipcode);
 
         if (!isValidZipcode(zipcodeNormalized)) {
             throw new BadRequestError("CEP inválido")
