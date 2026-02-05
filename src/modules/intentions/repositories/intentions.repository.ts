@@ -1,3 +1,4 @@
+import { error } from "node:console";
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import { BadRequestError } from "../../../shared/errors/httpErrors.js";
 import type { ICreateIntention } from "../interfaces/createIntention.interface.js";
@@ -14,9 +15,7 @@ class IntentionsRepository {
                 }
             });
         } catch (e) {
-            if (e instanceof Error) {
-                throw new Error(e.message);
-            }
+            console.error('Erro ao criar registro', error)
         }
     }
 
@@ -32,9 +31,7 @@ class IntentionsRepository {
             })
         }
         catch (e) {
-            if (e instanceof Error) {
-                throw new Error(e.message);
-            }
+          console.error("erro ao atualizar registro")
         }
     }
 }

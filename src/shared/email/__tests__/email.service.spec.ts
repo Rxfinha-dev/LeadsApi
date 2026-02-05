@@ -40,6 +40,9 @@ describe('EmailService', () => {
   });
 
   it('deve propagar o erro quando emailProvider.sendMail falhar', async () => {
+    // Mocka console.error para não aparecer na saída dos testes
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    
     const sendMailSpy = jest
       .spyOn(emailProvider, 'sendMail')
       .mockRejectedValueOnce(new Error('Falha ao enviar e-mail'));
@@ -53,6 +56,10 @@ describe('EmailService', () => {
     ).rejects.toThrow('Falha ao enviar e-mail');
 
     expect(sendMailSpy).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    
+    // Restaura o console.error original
+    consoleErrorSpy.mockRestore();
   });
 });
 

@@ -1,3 +1,4 @@
+import { error } from "node:console";
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import type { ICreateLead } from "../interfaces/createLead.interface.js";
 
@@ -11,9 +12,7 @@ class LeadsRepository {
                 }
             });
         } catch (e) {
-            if (e instanceof Error) {
-                throw new Error(e.message);
-            }
+            console.error("Erro ao registrar lead", error)
         }
     }
 }

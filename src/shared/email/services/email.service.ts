@@ -1,4 +1,3 @@
-import { error } from "node:console";
 import type { ISendEmail } from "../interfaces/sendEmail.interface.js";
 import { emailProvider } from "../providers/email.provider.js";
 
@@ -14,7 +13,8 @@ class EmailService {
         html,
       });
     } catch (e) {
-      console.error("Erro ao enviar o email", error)
+      console.error("Erro ao enviar o email", e);
+      throw e;
     }
   }
 }
