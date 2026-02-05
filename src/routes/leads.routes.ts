@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyPluginOptions, FastifyRequest, FastifyReply } from "fastify";
 import { ok } from "node:assert";
-import { LeadsController } from "../modules/leads/controller/leads.controller.js";
+import { LeadsController } from "../modules/leads/controllers/leads.controller.js";
 
 
 export async function leadsRoutes(fastify: FastifyInstance, options: FastifyPluginOptions) {

@@ -1,7 +1,7 @@
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import { emailService } from "../../../shared/email/services/email.service.js";
 import type { ICreateLead } from "../interfaces/createLead.interface.js";
-import { LeadsRepository } from "../repository/leads.repository.js";
+import { LeadsRepository } from "../repositories/leads.repository.js";
 
 class LeadsServices {
     async createLead({ name, email }: ICreateLead) {

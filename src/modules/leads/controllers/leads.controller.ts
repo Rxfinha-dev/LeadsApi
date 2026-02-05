@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { ICreateLead } from "../interfaces/createLead.interface.js";
-import { LeadsServices } from "../service/leads.services.js";
+import { LeadsServices } from "../services/leads.services.js";
 
 class LeadsController {
     async post(request: FastifyRequest, reply: FastifyReply) {
