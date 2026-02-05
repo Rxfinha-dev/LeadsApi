@@ -1,7 +1,7 @@
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import { BadRequestError, NotFoundError } from "../../../shared/errors/httpErrors.js";
 import { formatZipcode } from "../../../shared/helpers/zipcodeFormatter.helper.js";
-import { ZipcodeValidationService } from "../../../shared/zipcode/services/zipcodeValidation.services.js";
+import { ZipcodeValidationService } from "../../../shared/helpers/zipcode/services/zipcodeValidation.services.js";
 import type { ICreateIntention } from "../interfaces/createIntention.interface.js";
 import type { IUpdateLeadId } from "../interfaces/updateIntention.interface.js";
 import { IntentionsRepository } from "../repositories/intentions.repository.js";

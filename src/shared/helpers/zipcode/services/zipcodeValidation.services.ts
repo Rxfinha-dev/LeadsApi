@@ -1,6 +1,6 @@
-import { BadRequestError, NotFoundError } from "../../errors/httpErrors.js";
-import { isValidZipcode } from "../../helpers/isValidZipcode.helper.js";
-import { formatZipcode } from "../../helpers/zipcodeFormatter.helper.js";
+import { BadRequestError, NotFoundError } from "../../../errors/httpErrors.js";
+import { isValidZipcode } from "../../isValidZipcode.helper.js";
+import { formatZipcode } from "../../zipcodeFormatter.helper.js";
 import type { IZipcodeValidation } from "../interfaces/zipcodeValidation.interface.js";
 
 class ZipcodeValidationService {
