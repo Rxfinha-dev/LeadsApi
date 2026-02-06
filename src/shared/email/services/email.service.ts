@@ -1,8 +1,6 @@
 import type { ISendEmail } from "../interfaces/sendEmail.interface.js";
 import { emailProvider } from "../providers/email.provider.js";
 
-
-
 class EmailService {
   async send({ to, subject, html }: ISendEmail) {
     try {

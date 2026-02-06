@@ -1,6 +1,4 @@
-import { error } from "node:console";
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
-import { BadRequestError } from "../../../shared/errors/httpErrors.js";
 import type { ICreateIntention } from "../interfaces/createIntention.interface.js";
 import type { IUpdateLeadId } from "../interfaces/updateIntention.interface.js";
 

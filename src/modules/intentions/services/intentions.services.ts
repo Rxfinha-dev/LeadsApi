@@ -1,4 +1,4 @@
-import { error } from "node:console";
+
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import { BadRequestError, NotFoundError } from "../../../shared/errors/httpErrors.js";
 import { ZipcodeValidationService } from "../../../shared/helpers/zipcode/services/zipcodeValidation.services.js";

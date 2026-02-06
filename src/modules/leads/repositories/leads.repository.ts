@@ -1,4 +1,3 @@
-import { error } from "node:console";
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import type { ICreateLead } from "../interfaces/createLead.interface.js";
 

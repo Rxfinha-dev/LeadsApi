@@ -1,4 +1,3 @@
-import { error } from "node:console";
 import { prismaClient } from "../../../shared/clients/prismaClient.js";
 import { emailService } from "../../../shared/email/services/email.service.js";
 import { BadRequestError } from "../../../shared/errors/httpErrors.js";
