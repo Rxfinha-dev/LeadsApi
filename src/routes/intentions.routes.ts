@@ -22,7 +22,7 @@ export async function intentionsRoutes(fastify: FastifyInstance,) {
                         id: { type: "string" },
                         zipcode_start: { type: "string" },
                         zipcode_end: { type: "string" },
-                        lead_id: {type: "string"},
+                        lead_id: { type: "string" },
                         created_at: {
                             type: "string",
                             format: "date-time"
@@ -74,7 +74,7 @@ export async function intentionsRoutes(fastify: FastifyInstance,) {
                     },
                 },
             },
-            
+
         },
     }, async (request: FastifyRequest, reply: FastifyReply) => {
         return new IntentionsController().createIntention(request, reply);
@@ -92,15 +92,34 @@ export async function intentionsRoutes(fastify: FastifyInstance,) {
                 required: ["lead_id"],
             },
             response: {
-                200: {
+                201: {
                     type: "object",
                     properties: {
                         id: { type: "string" },
-                        lead_id: { type: "string" }
+                        zipcode_start: { type: "string" },
+                        zipcode_end: { type: "string" },
+                        lead_id: { type: "string" },
+                        created_at: {
+                            type: "string",
+                            format: "date-time"
+                        },
+                        updated_at: {
+                            type: "string",
+                            format: "date-time"
+                        },
+                        deleted_at: {
+                            type: "string",
+                            format: "date-time"
+                        },
                     },
                     example: {
-                        id: "123",
-                        lead_id: "abc-456"
+                        id: "6e29df17-5cb2-4623-b6ff-11c63fea2f6c",
+                        zipcode_start: "01001-000",
+                        zipcode_end: "01001-000",
+                        lead_id: "6e29df17-5cb2-4623-b6ff-11c63fea2f6c",
+                        created_at: "2026-02-05T10:12:23.768Z",
+                        updated_at: "2026-02-05T10:12:23.768Z",
+                        deleated_at: null
                     }
                 },
                 400: {
@@ -111,16 +130,7 @@ export async function intentionsRoutes(fastify: FastifyInstance,) {
                     example: {
                         message: "BadRequest"
                     }
-                },
-                404: {
-                    type: "object",
-                    properties: {
-                        message: { type: "string" }
-                    },
-                    example: {
-                        message: "Intention not found"
-                    }
-                },
+                },                
                 500: {
                     type: "object",
                     properties: {

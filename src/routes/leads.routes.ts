@@ -53,16 +53,7 @@ export async function leadsRoutes(fastify: FastifyInstance) {
                     example: {
                         message: "BadRequest"
                     }
-                },
-                404: {
-                    type: "object",
-                    properties: {
-                        message: { type: "string" }
-                    },
-                    example: {
-                        message: "Intention not found"
-                    }
-                },
+                },                
                 500: {
                     type: "object",
                     properties: {
