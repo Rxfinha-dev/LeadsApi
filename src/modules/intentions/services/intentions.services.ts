@@ -16,7 +16,6 @@ class IntentionsServices {
 
     async createIntention({ zipcode_start, zipcode_end }: ICreateIntention) {
         try {
-
           
             await this.zipcodeService.verifyZipcode(zipcode_start);
             await this.zipcodeService.verifyZipcode(zipcode_end);

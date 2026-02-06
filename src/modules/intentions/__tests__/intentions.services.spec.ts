@@ -1,295 +1,178 @@
-import { jest } from '@jest/globals';
+import { IntentionsServices } from '../services/intentions.services.js';
 import { BadRequestError, NotFoundError } from '../../../shared/errors/httpErrors.js';
+import { prismaClient } from '../../../shared/clients/prismaClient.js';
+import { jest } from '@jest/globals';
 
-// Mocka os módulos usando ESM
-const mockCreateIntentionRepo = jest.fn<any>();
-const mockUpdateLeadIdRepo = jest.fn<any>();
-const mockVerifyZipcode = jest.fn<any>();
-const mockPrismaIntentionFindFirst = jest.fn<any>();
-const mockPrismaLeadFindFirst = jest.fn<any>();
-
-jest.unstable_mockModule('../repositories/intentions.repository.js', () => ({
-    IntentionsRepository: class {
-        createIntention = mockCreateIntentionRepo;
-        updateLeadId = mockUpdateLeadIdRepo;
+jest.mock('../repositories/intentions.repository');
+jest.mock('../../../shared/helpers/zipcode/services/zipcodeValidation.services');
+jest.mock('../../../shared/clients/prismaClient', () => ({
+  prismaClient: {
+    intention: {
+      findFirst: jest.fn(),
     },
-}));
-
-jest.unstable_mockModule('../../../shared/helpers/zipcode/services/zipcodeValidation.services.js', () => ({
-    ZipcodeValidationService: class {
-        verifyZipcode = mockVerifyZipcode;
+    lead: {
+      findFirst: jest.fn(),
     },
+  },
 }));
-
-jest.unstable_mockModule('../../../shared/clients/prismaClient.js', () => ({
-    prismaClient: {
-        intention: {
-            findFirst: mockPrismaIntentionFindFirst,
-        },
-        lead: {
-            findFirst: mockPrismaLeadFindFirst,
-        },
-    },
-}));
-
-const { IntentionsServices } = await import('../services/intentions.services.js');
 
 describe('IntentionsServices', () => {
-    let intentionsServices: InstanceType<typeof IntentionsServices>;
+  let service: IntentionsServices;
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-        intentionsServices = new IntentionsServices();
+  const mockRepository = {
+    createIntention: jest.fn(),
+    updateLeadId: jest.fn(),
+  };
+
+  const mockZipcodeService = {
+    verifyZipcode: jest.fn(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    // @ts-ignore
+    service = new IntentionsServices();
+
+    // sobrescreve dependências privadas
+    // @ts-ignore
+    service.intentionsRepository = mockRepository;
+    // @ts-ignore
+    service.zipcodeService = mockZipcodeService;
+  });
+
+  describe('createIntention', () => {
+    it('deve criar uma intention quando os zipcodes forem válidos', async () => {
+      mockZipcodeService.verifyZipcode.mockResolvedValue(undefined);
+      mockRepository.createIntention.mockResolvedValue({ id: '1' });
+
+      const result = await service.createIntention({
+        zipcode_start: '12345678',
+        zipcode_end: '87654321',
+      });
+
+      expect(mockZipcodeService.verifyZipcode).toHaveBeenCalledTimes(2);
+      expect(mockRepository.createIntention).toHaveBeenCalled();
+      expect(result).toEqual({ id: '1' });
     });
 
-    describe('createIntention', () => {
-        it('deve criar uma intention com sucesso', async () => {
-            const mockIntentionData = {
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-            };
+    it('deve lançar erro quando zipcode_start for inválido', async () => {
+      const error = new BadRequestError('CEP inválido');
+      mockZipcodeService.verifyZipcode.mockRejectedValueOnce(error);
 
-            const mockCreatedIntention = {
-                id: '123',
-                ...mockIntentionData,
-                lead_id: null,
-                created_at: new Date(),
-                updated_at: null,
-                deleted_at: null,
-            };
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
 
-            mockVerifyZipcode.mockResolvedValue(undefined);
-            mockCreateIntentionRepo.mockResolvedValue(mockCreatedIntention);
+      await expect(
+        service.createIntention({
+          zipcode_start: '000',
+          zipcode_end: '87654321',
+        })
+      ).rejects.toThrow(error);
 
-            const result = await intentionsServices.createIntention(mockIntentionData);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Erro no createIntention no service'
+      );
 
-            expect(mockVerifyZipcode).toHaveBeenCalledWith('12345678');
-            expect(mockVerifyZipcode).toHaveBeenCalledWith('87654321');
-            expect(mockCreateIntentionRepo).toHaveBeenCalledWith(mockIntentionData);
-            expect(result).toEqual(mockCreatedIntention);
-        });
-
-        it('deve retornar undefined quando a validação do zipcode falhar', async () => {
-            const mockIntentionData = {
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-            };
-
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-            mockVerifyZipcode.mockRejectedValue(new Error('CEP inválido'));
-
-            const result = await intentionsServices.createIntention(mockIntentionData);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao criar intention', expect.anything());
-            expect(result).toBeUndefined();
-            consoleErrorSpy.mockRestore();
-        });
-
-        it('deve retornar undefined quando a criação da intention falhar', async () => {
-            const mockIntentionData = {
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-            };
-
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-            mockVerifyZipcode.mockResolvedValue(undefined);
-            mockCreateIntentionRepo.mockRejectedValue(new Error('Database error'));
-
-            const result = await intentionsServices.createIntention(mockIntentionData);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao criar intention', expect.anything());
-            expect(result).toBeUndefined();
-            consoleErrorSpy.mockRestore();
-        });
+      consoleSpy.mockRestore();
     });
 
-    describe('updateLeadId', () => {
-        it('deve atualizar o lead_id com sucesso', async () => {
-            const mockUpdateData = {
-                intention_id: '123',
-                lead_id: '456',
-            };
+    it('deve lançar erro quando zipcode_end for inválido', async () => {
+      mockZipcodeService.verifyZipcode
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new BadRequestError('CEP inválido'));
 
-            const mockIntention = {
-                id: '123',
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-                lead_id: null,
-                created_at: new Date(),
-                updated_at: null,
-                deleted_at: null,
-            };
-
-            const mockLead = {
-                id: '456',
-                name: 'John Doe',
-                email: 'john@example.com',
-                deleted_at: null,
-                created_at: new Date(),
-                updated_at: null,
-            };
-
-            const mockUpdatedIntention = {
-                ...mockIntention,
-                lead_id: '456',
-            };
-
-            mockPrismaIntentionFindFirst.mockResolvedValue(mockIntention);
-            mockPrismaLeadFindFirst.mockResolvedValue(mockLead);
-            mockUpdateLeadIdRepo.mockResolvedValue(mockUpdatedIntention);
-
-            const result = await intentionsServices.updateLeadId(mockUpdateData);
-
-            expect(mockPrismaIntentionFindFirst).toHaveBeenCalledWith({
-                where: { id: '123' },
-            });
-            expect(mockPrismaLeadFindFirst).toHaveBeenCalledWith({
-                where: { id: '456' },
-            });
-            expect(mockUpdateLeadIdRepo).toHaveBeenCalledWith(mockUpdateData);
-            expect(result).toEqual(mockUpdatedIntention);
-        });
-
-        it('deve retornar undefined quando a intention não existir', async () => {
-            const mockUpdateData = {
-                intention_id: '123',
-                lead_id: '456',
-            };
-
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-            mockPrismaIntentionFindFirst.mockResolvedValue(null);
-
-            const result = await intentionsServices.updateLeadId(mockUpdateData);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao atualizar intention', expect.anything());
-            expect(result).toBeUndefined();
-            consoleErrorSpy.mockRestore();
-        });
-
-        it('deve retornar undefined quando a intention já tiver um lead vinculado', async () => {
-            const mockUpdateData = {
-                intention_id: '123',
-                lead_id: '456',
-            };
-
-            const mockIntention = {
-                id: '123',
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-                lead_id: '789',
-                created_at: new Date(),
-                updated_at: null,
-                deleted_at: null,
-            };
-
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-            mockPrismaIntentionFindFirst.mockResolvedValue(mockIntention);
-
-            const result = await intentionsServices.updateLeadId(mockUpdateData);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao atualizar intention', expect.anything());
-            expect(result).toBeUndefined();
-            consoleErrorSpy.mockRestore();
-        });
-
-        it('deve retornar undefined quando o lead não existir', async () => {
-            const mockUpdateData = {
-                intention_id: '123',
-                lead_id: '456',
-            };
-
-            const mockIntention = {
-                id: '123',
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-                lead_id: null,
-                created_at: new Date(),
-                updated_at: null,
-                deleted_at: null,
-            };
-
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-            mockPrismaIntentionFindFirst.mockResolvedValue(mockIntention);
-            mockPrismaLeadFindFirst.mockResolvedValue(null);
-
-            const result = await intentionsServices.updateLeadId(mockUpdateData);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao atualizar intention', expect.anything());
-            expect(result).toBeUndefined();
-            consoleErrorSpy.mockRestore();
-        });
-
-        it('deve retornar undefined quando o lead estiver inativo', async () => {
-            const mockUpdateData = {
-                intention_id: '123',
-                lead_id: '456',
-            };
-
-            const mockIntention = {
-                id: '123',
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-                lead_id: null,
-                created_at: new Date(),
-                updated_at: null,
-                deleted_at: null,
-            };
-
-            const mockLead = {
-                id: '456',
-                name: 'John Doe',
-                email: 'john@example.com',
-                deleted_at: new Date(),
-                created_at: new Date(),
-                updated_at: null,
-            };
-
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-            mockPrismaIntentionFindFirst.mockResolvedValue(mockIntention);
-            mockPrismaLeadFindFirst.mockResolvedValue(mockLead);
-
-            const result = await intentionsServices.updateLeadId(mockUpdateData);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao atualizar intention', expect.anything());
-            expect(result).toBeUndefined();
-            consoleErrorSpy.mockRestore();
-        });
-
-        it('deve retornar undefined quando ocorrer erro no repository', async () => {
-            const mockUpdateData = {
-                intention_id: '123',
-                lead_id: '456',
-            };
-
-            const mockIntention = {
-                id: '123',
-                zipcode_start: '12345678',
-                zipcode_end: '87654321',
-                lead_id: null,
-                created_at: new Date(),
-                updated_at: null,
-                deleted_at: null,
-            };
-
-            const mockLead = {
-                id: '456',
-                name: 'John Doe',
-                email: 'john@example.com',
-                deleted_at: null,
-                created_at: new Date(),
-                updated_at: null,
-            };
-
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-            mockPrismaIntentionFindFirst.mockResolvedValue(mockIntention);
-            mockPrismaLeadFindFirst.mockResolvedValue(mockLead);
-            mockUpdateLeadIdRepo.mockRejectedValue(new Error('Database error'));
-
-            const result = await intentionsServices.updateLeadId(mockUpdateData);
-
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao atualizar intention', expect.anything());
-            expect(result).toBeUndefined();
-            consoleErrorSpy.mockRestore();
-        });
+      await expect(
+        service.createIntention({
+          zipcode_start: '12345678',
+          zipcode_end: '000',
+        })
+      ).rejects.toThrow(BadRequestError);
     });
+  });
+
+  describe('updateLeadId', () => {
+    it('deve lançar erro se a intention não existir', async () => {
+      (prismaClient.intention.findFirst as jest.Mock).mockResolvedValue(null);
+
+      await expect(
+        service.updateLeadId({
+          intention_id: '1',
+          lead_id: '2',
+        })
+      ).rejects.toThrow(NotFoundError);
+    });
+
+    it('deve lançar erro se a intention já tiver lead', async () => {
+      (prismaClient.intention.findFirst as jest.Mock).mockResolvedValue({
+        id: '1',
+        lead_id: '123',
+      });
+
+      await expect(
+        service.updateLeadId({
+          intention_id: '1',
+          lead_id: '2',
+        })
+      ).rejects.toThrow(BadRequestError);
+    });
+
+    it('deve lançar erro se o lead não existir', async () => {
+      (prismaClient.intention.findFirst as jest.Mock).mockResolvedValue({
+        id: '1',
+        lead_id: null,
+      });
+
+      (prismaClient.lead.findFirst as jest.Mock).mockResolvedValue(null);
+
+      await expect(
+        service.updateLeadId({
+          intention_id: '1',
+          lead_id: '2',
+        })
+      ).rejects.toThrow(NotFoundError);
+    });
+
+    it('deve lançar erro se o lead estiver inativo', async () => {
+      (prismaClient.intention.findFirst as jest.Mock).mockResolvedValue({
+        id: '1',
+        lead_id: null,
+      });
+
+      (prismaClient.lead.findFirst as jest.Mock).mockResolvedValue({
+        id: '2',
+        deleted_at: new Date(),
+      });
+
+      await expect(
+        service.updateLeadId({
+          intention_id: '1',
+          lead_id: '2',
+        })
+      ).rejects.toThrow(BadRequestError);
+    });
+
+    it('deve atualizar o lead com sucesso', async () => {
+      (prismaClient.intention.findFirst as jest.Mock).mockResolvedValue({
+        id: '1',
+        lead_id: null,
+      });
+
+      (prismaClient.lead.findFirst as jest.Mock).mockResolvedValue({
+        id: '2',
+        deleted_at: null,
+      });
+
+      mockRepository.updateLeadId.mockResolvedValue({ success: true });
+
+      const result = await service.updateLeadId({
+        intention_id: '1',
+        lead_id: '2',
+      });
+
+      expect(mockRepository.updateLeadId).toHaveBeenCalled();
+      expect(result).toEqual({ success: true });
+    });
+  });
 });

@@ -4,7 +4,7 @@ import { formatZipcode } from "../../zipcodeFormatter.helper.js";
 import type { IZipcodeValidation } from "../interfaces/zipcodeValidation.interface.js";
 
 class ZipcodeValidationService {
-    async verifyZipcode(zipcode: string): Promise<IZipcodeValidation> {      
+    async verifyZipcode(zipcode: string): Promise<IZipcodeValidation> {
 
         if (!isValidZipcode(zipcode)) {
             throw new BadRequestError("CEP inválido");
@@ -14,7 +14,7 @@ class ZipcodeValidationService {
         );
 
         if (!response.ok) {
-            throw new BadRequestError("CEP inválido");
+            throw new BadRequestError("CEP nao foi");
         }
 
         const data: IZipcodeValidation = await response.json();
@@ -25,6 +25,8 @@ class ZipcodeValidationService {
 
         return data;
     }
+
 }
+
 
 export { ZipcodeValidationService };

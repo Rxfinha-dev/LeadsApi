@@ -136,7 +136,7 @@ describe('LeadsServices', () => {
             expect(result).toEqual(mockCreatedLead);
         });
 
-        it('deve retornar undefined quando email já estiver cadastrado', async () => {
+        it('deve lançar BadRequestError quando email já estiver cadastrado', async () => {
             const mockLeadData = {
                 name: 'John Doe',
                 email: 'john.doe@example.com',
@@ -154,7 +154,13 @@ describe('LeadsServices', () => {
             const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
             mockPrismaLeadFindFirst.mockResolvedValue(existingLead);
 
-            const result = await leadsServices.createLead(mockLeadData);
+            await expect(
+                leadsServices.createLead(mockLeadData)
+            ).rejects.toThrow(BadRequestError);
+
+            await expect(
+                leadsServices.createLead(mockLeadData)
+            ).rejects.toThrow('Email já cadastrado');
 
             expect(mockPrismaLeadFindFirst).toHaveBeenCalledWith({
                 where: {
@@ -164,8 +170,8 @@ describe('LeadsServices', () => {
             });
             expect(mockCreateLeadRepo).not.toHaveBeenCalled();
             expect(mockEmailServiceSend).not.toHaveBeenCalled();
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao criar lead', expect.anything());
-            expect(result).toBeUndefined();
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro no createLead no service');
+            
             consoleErrorSpy.mockRestore();
         });
 
@@ -185,6 +191,7 @@ describe('LeadsServices', () => {
             };
 
             // A busca retorna null porque o where inclui deleted_at: null
+            // Então emails deletados não são encontrados
             mockPrismaLeadFindFirst.mockResolvedValue(null);
             mockCreateLeadRepo.mockResolvedValue(mockCreatedLead);
             mockEmailServiceSend.mockResolvedValue(undefined);
@@ -195,24 +202,28 @@ describe('LeadsServices', () => {
             expect(mockEmailServiceSend).toHaveBeenCalled();
         });
 
-        it('deve retornar undefined quando a criação do lead falhar', async () => {
+        it('deve lançar erro quando a criação do lead falhar no repository', async () => {
             const mockLeadData = {
                 name: 'John Doe',
                 email: 'john.doe@example.com',
             };
 
+            const databaseError = new Error('Database connection error');
             const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            
             mockPrismaLeadFindFirst.mockResolvedValue(null);
-            mockCreateLeadRepo.mockRejectedValue(new Error('Database error'));
+            mockCreateLeadRepo.mockRejectedValue(databaseError);
 
-            const result = await leadsServices.createLead(mockLeadData);
+            await expect(
+                leadsServices.createLead(mockLeadData)
+            ).rejects.toThrow('Database connection error');
 
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao criar lead', expect.anything());
-            expect(result).toBeUndefined();
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro no createLead no service');
+            
             consoleErrorSpy.mockRestore();
         });
 
-        it('deve retornar undefined quando o envio de email falhar', async () => {
+        it('deve lançar erro quando o envio de email falhar', async () => {
             const mockLeadData = {
                 name: 'John Doe',
                 email: 'john.doe@example.com',
@@ -227,15 +238,20 @@ describe('LeadsServices', () => {
                 deleted_at: null,
             };
 
+            const emailError = new Error('SMTP server error');
             const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            
             mockPrismaLeadFindFirst.mockResolvedValue(null);
             mockCreateLeadRepo.mockResolvedValue(mockCreatedLead);
-            mockEmailServiceSend.mockRejectedValue(new Error('Email service error'));
+            mockEmailServiceSend.mockRejectedValue(emailError);
 
-            const result = await leadsServices.createLead(mockLeadData);
+            await expect(
+                leadsServices.createLead(mockLeadData)
+            ).rejects.toThrow('SMTP server error');
 
-            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao criar lead', expect.anything());
-            expect(result).toBeUndefined();
+            expect(mockCreateLeadRepo).toHaveBeenCalledWith(mockLeadData);
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro no createLead no service');
+            
             consoleErrorSpy.mockRestore();
         });
 
@@ -267,31 +283,54 @@ describe('LeadsServices', () => {
             });
         });
 
-        it('deve criar lead mesmo que o email de boas-vindas falhe', async () => {
+        it('deve verificar o fluxo completo: busca, criação e email', async () => {
             const mockLeadData = {
-                name: 'John Doe',
-                email: 'john.doe@example.com',
+                name: 'Complete Test',
+                email: 'complete@test.com',
             };
 
             const mockCreatedLead = {
-                id: '123',
-                name: 'John Doe',
-                email: 'john.doe@example.com',
+                id: '999',
+                name: 'Complete Test',
+                email: 'complete@test.com',
                 created_at: new Date(),
                 updated_at: null,
                 deleted_at: null,
             };
 
-            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
             mockPrismaLeadFindFirst.mockResolvedValue(null);
             mockCreateLeadRepo.mockResolvedValue(mockCreatedLead);
-            mockEmailServiceSend.mockRejectedValue(new Error('SMTP error'));
+            mockEmailServiceSend.mockResolvedValue(undefined);
 
             const result = await leadsServices.createLead(mockLeadData);
 
-            expect(mockCreateLeadRepo).toHaveBeenCalledWith(mockLeadData);
-            expect(consoleErrorSpy).toHaveBeenCalled();
-            expect(result).toBeUndefined();
+            // Verifica a ordem das chamadas
+            expect(mockPrismaLeadFindFirst).toHaveBeenCalledTimes(1);
+            expect(mockCreateLeadRepo).toHaveBeenCalledTimes(1);
+            
+            // Verifica o retorno
+            expect(result).toEqual(mockCreatedLead);
+            expect(result.id).toBe('999');
+            expect(result.email).toBe('complete@test.com');
+        });
+
+        it('deve fazer log de erro genérico e re-lançar a exceção', async () => {
+            const mockLeadData = {
+                name: 'Error Test',
+                email: 'error@test.com',
+            };
+
+            const customError = new Error('Unexpected error');
+            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            
+            mockPrismaLeadFindFirst.mockRejectedValue(customError);
+
+            await expect(
+                leadsServices.createLead(mockLeadData)
+            ).rejects.toThrow('Unexpected error');
+
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Erro no createLead no service');
+            
             consoleErrorSpy.mockRestore();
         });
     });
