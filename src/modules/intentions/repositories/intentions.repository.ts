@@ -22,7 +22,8 @@ class IntentionsRepository {
         try {
             return await prismaClient.intention.update({
                 data: {
-                    lead_id
+                    lead_id,
+                    updated_at: new Date()
                 },
                 where: {
                     id: intention_id
@@ -30,7 +31,7 @@ class IntentionsRepository {
             })
         }
         catch (e) {
-             console.error("Erro no updateLead no repository");
+            console.error("Erro no updateLead no repository");
             throw e;
         }
     }

@@ -27,6 +27,7 @@ class IntentionsController {
     async updateLeadId(request: FastifyRequest, reply: FastifyReply) {
         const { intention_id } = request.params as { intention_id: string };
         const { lead_id } = request.body as { lead_id: string };
+      
 
         if (!intention_id) {
             throw new BadRequestError("Informe o id!")
@@ -36,7 +37,7 @@ class IntentionsController {
             throw new BadRequestError("O id do lead é necessário")
         }
 
-        const intention = await this.intentionsServices.updateLeadId({ intention_id, lead_id })
+        const intention = await this.intentionsServices.updateLeadId({ intention_id, lead_id})
         return reply.send(intention)
     }
 }
