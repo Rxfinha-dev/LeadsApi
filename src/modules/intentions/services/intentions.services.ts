@@ -11,12 +11,13 @@ class IntentionsServices {
     private readonly zipcodeService: ZipcodeValidationService;
     constructor() {
         this.intentionsRepository = new IntentionsRepository();
-        this.zipcodeService = new ZipcodeValidationService
+        this.zipcodeService = new ZipcodeValidationService();
     }
 
     async createIntention({ zipcode_start, zipcode_end }: ICreateIntention) {
         try {
 
+          
             await this.zipcodeService.verifyZipcode(zipcode_start);
             await this.zipcodeService.verifyZipcode(zipcode_end);
 
@@ -25,12 +26,14 @@ class IntentionsServices {
             return intention;
 
         } catch (e) {
-            console.error("Erro ao criar intention", error);
+            console.error("Erro no createIntention no service");
+            throw e;
         }
     };
 
     async updateLeadId({ intention_id, lead_id }: IUpdateLeadId) {
         try {
+
             const intentionExists = await prismaClient.intention.findFirst({
                 where: {
                     id: intention_id
@@ -61,7 +64,8 @@ class IntentionsServices {
 
             return intention;
         } catch (e) {
-            console.error("Erro ao atualizar intention", error);
+            console.error("Erro no updateLead no service");
+            throw e;
         }
 
     }

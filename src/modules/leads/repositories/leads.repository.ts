@@ -12,7 +12,8 @@ class LeadsRepository {
                 }
             });
         } catch (e) {
-            console.error("Erro ao registrar lead", error)
+             console.error("Erro no createLead no repository");
+            throw e;
         }
     }
 }

@@ -4,25 +4,23 @@ import { formatZipcode } from "../../zipcodeFormatter.helper.js";
 import type { IZipcodeValidation } from "../interfaces/zipcodeValidation.interface.js";
 
 class ZipcodeValidationService {
-    async verifyZipcode(zipcode: string): Promise<IZipcodeValidation> {
+    async verifyZipcode(zipcode: string): Promise<IZipcodeValidation> {      
 
-        const zipcodeNormalized = formatZipcode(zipcode);
-
-        if (!isValidZipcode(zipcodeNormalized)) {
-            throw new BadRequestError("CEP inválido")
+        if (!isValidZipcode(zipcode)) {
+            throw new BadRequestError("CEP inválido");
         }
         const response = await fetch(
-            `https://viacep.com.br/ws/${zipcodeNormalized}/json/`
+            `https://viacep.com.br/ws/${zipcode}/json/`
         );
 
         if (!response.ok) {
-            throw new BadRequestError("CEP inválido")
+            throw new BadRequestError("CEP inválido");
         }
 
         const data: IZipcodeValidation = await response.json();
 
         if (data.erro) {
-            throw new NotFoundError(`CEP não encontrado: ${zipcodeNormalized}!`)
+            throw new BadRequestError("Cep não existe!")
         }
 
         return data;

@@ -15,7 +15,8 @@ class IntentionsRepository {
                 }
             });
         } catch (e) {
-            console.error('Erro ao criar registro', error)
+            console.error("Erro no createIntention no repository");
+            throw e;
         }
     }
 
@@ -31,7 +32,8 @@ class IntentionsRepository {
             })
         }
         catch (e) {
-          console.error("erro ao atualizar registro")
+             console.error("Erro no updateLead no repository");
+            throw e;
         }
     }
 }

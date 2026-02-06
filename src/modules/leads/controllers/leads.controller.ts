@@ -21,7 +21,7 @@ class LeadsController {
                 throw new BadRequestError("Nome deve ter entre 3 e 100 caracteres");
             }
 
-              if(email.length < 10 || email.length > 100)
+            if(email.length < 10 || email.length > 100)
             {
                 throw new BadRequestError("Email deve ter entre 3 e 100 caracteres");
             }

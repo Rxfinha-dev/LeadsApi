@@ -38,7 +38,8 @@ class LeadsServices {
             return lead;
 
         } catch (e) {
-           console.error("Erro ao criar lead", error)
+            console.error("Erro no createLead no service");
+            throw e;
         }
     }
 }
