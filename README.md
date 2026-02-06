@@ -30,7 +30,7 @@ yarn install
 Crie um arquivo `.env` com as variáveis de ambiente necessárias. Veja um exemplo genérico:
 
 ```env
-DATABASE_URL=mysql://usuario:senha@localhost:3306/nome_banco
+DATABASE_URL=postgresql://usuario:senha@localhost:3306/nome_banco
 MAIL_HOST=
 MAIL_PORT=
 MAIL_USER=
