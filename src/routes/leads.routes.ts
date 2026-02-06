@@ -6,7 +6,7 @@ export async function leadsRoutes(fastify: FastifyInstance) {
     fastify.post("", {
         schema: {
             tags: ["Leads"],
-            summary: "Cadastra um lead",
+            summary: "Cadastra um novo lead.",
             body: {
                 type: "object",
                 properties: {

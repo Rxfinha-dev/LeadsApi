@@ -6,7 +6,7 @@ export async function intentionsRoutes(fastify: FastifyInstance,) {
     fastify.post("", {
         schema: {
             tags: ["Intentions"],
-            summary: "Cria uma intenção",
+            summary: "Cadastra uma nova intenção de frete.",
             body: {
                 type: "object",
                 properties: {
@@ -83,7 +83,7 @@ export async function intentionsRoutes(fastify: FastifyInstance,) {
     fastify.put("/:intention_id", {
         schema: {
             tags: ["Intentions"],
-            summary: "Vincula um Lead à uma Intention",
+            summary: "Atualiza uma intenção, associando-a a um lead existente.",
             body: {
                 type: "object",
                 properties: {
