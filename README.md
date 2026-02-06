@@ -11,8 +11,8 @@
 Clone o repositório:
 
 ```bash
-git clone <https://github.com/Rxfinha-dev/LeadsApi.git>
-cd <LeadsApi>
+git clone https://github.com/Rxfinha-dev/LeadsApi.git
+cd LeadsApi
 ```
 
 ## 3. Instalando as Dependências
