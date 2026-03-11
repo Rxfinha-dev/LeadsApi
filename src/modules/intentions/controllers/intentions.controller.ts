@@ -9,6 +9,8 @@ class IntentionsController {
     constructor() {
         this.intentionsServices = new IntentionsServices();
     }
+
+    // Método para criar uma nova intenção
     async createIntention(request: FastifyRequest, reply: FastifyReply) {
         const { zipcode_start, zipcode_end } = request.body as ICreateIntention;
 
